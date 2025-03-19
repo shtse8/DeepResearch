@@ -145,7 +145,7 @@ export class DeepSearch {
           });
           const results = response.organic_results || [];
 
-          this.updateState('acting', 'Web Search', `Found ${results.length} results for: ${input.query}\n ${results.map(r => r.title).join('\n')}`);
+          this.updateState('acting', 'Web Search', `Found ${results.length} results for: ${input.query}\n ${results.map((r: any) => r.title).join('\n')}`);
           this.addThought('action', `Found ${results.length} results for: ${input.query}`);
           return results;
         } catch (error) {
@@ -302,22 +302,28 @@ export class DeepSearch {
           Return the report as a structured JSON object with title and sections.
         `;
         
-        const { text } = await this.ai.generate(prompt);
+        const { output } = await this.ai.generate({
+          prompt: prompt, 
+          output: {
+            schema: z.object({
+              title: z.string(),
+              sections: z.array(z.object({
+                title: z.string(),
+                content: z.string().optional(),
+                subsections: z.array(z.object({
+                  title: z.string(),
+                  content: z.string()
+                })).optional()
+              }))
+            })
+          } 
+        });
         
-        try {
-          return JSON.parse(text);
-        } catch (error) {
-          console.error('Error parsing report JSON:', error);
-          return {
-            title: `Research on ${input.topic}`,
-            sections: [
-              { 
-                title: 'Error',
-                content: `Error generating structured report: ${(error as Error).message}. Raw output: ${text}` 
-              }
-            ]
-          };
+        if (!output) {
+          throw new Error('No output from generateResearchReport tool');
         }
+        
+        return output;
       }
     );
 
@@ -420,10 +426,10 @@ export class DeepSearch {
       console.log(`Navigating to: ${url}`);
       
       // Add timeout for navigation
-      await page.goto(url, { timeout: 30000 });
+      await page.goto(url);
       
       // Wait for content to load with timeout
-      await page.waitForSelector('body', { timeout: 10000 });
+      await page.waitForSelector('body');
       
       const content = await page.evaluate(() => {
         // Remove unwanted elements
