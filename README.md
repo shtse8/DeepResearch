@@ -1,7 +1,7 @@
 # DeepResearch 🧠
 
 <p align="center">
-  <img src="assets/logo.png" alt="DeepResearch Logo" width="200" height="200">
+  <img src="assets/logo.webp" alt="DeepResearch Logo" width="200" height="200">
   <br>
   <em>Advanced AI-Powered Research with Tree of Thoughts Reasoning</em>
 </p>
