@@ -292,7 +292,7 @@ Then end with the exact search query on its own line, formatted as: "SEARCH QUER
         
         if (shortLines.length > 0) {
           // Take the last short line
-          finalQuery = shortLines[shortLines.length - 1] || state.currentTopic;
+          finalQuery = shortLines[shortLines.length - 1] ?? state.currentTopic;
           
           // If it ends with a period, remove it
           finalQuery = finalQuery.replace(/\.$/, '');
