@@ -1,5 +1,5 @@
 import { genkit } from "genkit";
-import { openAI, gpt4oMini } from "genkitx-openai";
+import { openAI, gpt4oMini, gpt4o } from "genkitx-openai";
 import dotenv from 'dotenv';
 import type { ResearchReport } from './types';
 import { ResearchStateManager } from './state/ResearchState';
@@ -39,7 +39,7 @@ export class DeepSearch {
     // Initialize GenKit with OpenAI plugin
     this.ai = genkit({
       plugins: [openAI({ apiKey: process.env.OPENAI_API_KEY })],
-      model: gpt4oMini,
+      model: gpt4o,
     });
     
     // Initialize managers and components

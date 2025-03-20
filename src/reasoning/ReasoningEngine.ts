@@ -174,31 +174,54 @@ export class ReasoningEngine {
       Think step by step about which tool will provide the most valuable information at this stage of research.
     `;
     
-    // Use GenKit's tool selection capability or custom logic
-    const { output } = await this.ai.generate({
-      prompt,
-      output: {
-        schema: z.object({
-          toolName: z.string(),
-          reason: z.string(),
-          parameters: z.record(z.any())
-        })
+    try {
+      // Define the schema directly with genkit z schema
+      const toolSelectionSchema = z.object({
+        toolName: z.string().describe('The name of the selected tool'),
+        reason: z.string().describe('The reason for selecting this tool'),
+        parameters: z.record(z.any()).describe('The parameters to pass to the tool')
+      });
+
+      const { output } = await this.ai.generate({
+        prompt,
+        output: {
+          schema: toolSelectionSchema
+        }
+      });
+      
+      if (!output) {
+        return null;
       }
-    });
-    
-    if (!output) {
-      return null;
+      
+      // Update tool usage count
+      const currentCount = this.toolUsageCount.get(output.toolName) || 0;
+      this.toolUsageCount.set(output.toolName, currentCount + 1);
+      
+      // Create tool request
+      return {
+        name: output.toolName,
+        input: output.parameters
+      };
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error('Tool selection error:', errorMessage);
+      
+      // Fallback to a simple search tool if there's an error
+      console.log('Falling back to default search tool due to selection error');
+      
+      // Update tool usage count for fallback
+      const fallbackToolName = 'searchWeb';
+      const currentCount = this.toolUsageCount.get(fallbackToolName) || 0;
+      this.toolUsageCount.set(fallbackToolName, currentCount + 1);
+      
+      // Return a fallback search request with the topic as query
+      return {
+        name: fallbackToolName,
+        input: {
+          query: state.currentTopic
+        }
+      };
     }
-    
-    // Update tool usage count
-    const currentCount = this.toolUsageCount.get(output.toolName) || 0;
-    this.toolUsageCount.set(output.toolName, currentCount + 1);
-    
-    // Create tool request
-    return {
-      name: output.toolName,
-      input: output.parameters
-    };
   }
 
   /**
@@ -216,49 +239,71 @@ export class ReasoningEngine {
     
     this.stateManager.updateStatus('thinking', 'Tool Selection', 'Selecting appropriate tool based on reasoning');
     
-    // Step 3: Select appropriate tool
-    const toolRequest = await this.selectTool(selectedPath.content);
-    if (!toolRequest) {
-      throw new Error('Failed to select appropriate tool');
+    try {
+      // Step 3: Select appropriate tool
+      console.log('Selecting appropriate tool...');
+      const toolRequest = await this.selectTool(selectedPath.content);
+      if (!toolRequest) {
+        throw new Error('Failed to select appropriate tool');
+      }
+      
+      console.log(`Selected tool: ${toolRequest.name} with parameters:`, toolRequest.input);
+      
+      // Step 4: Acting - Execute the tool
+      this.stateManager.updateStatus('acting', 'Tool Execution', `Using ${toolRequest.name}`);
+      
+      // Find the selected tool
+      const selectedTool = this.tools.find(tool => tool.name === toolRequest.name);
+      if (!selectedTool) {
+        throw new Error(`Tool not found: ${toolRequest.name}`);
+      }
+      
+      // Execute the tool
+      const result = await selectedTool.handle(toolRequest.input);
+      
+      // Step 5: Observation - Evaluate results
+      this.stateManager.updateStatus('observing', 'Result Evaluation', `Evaluating results from ${toolRequest.name}`);
+      
+      const observation = this.stateManager.addThought(
+        'observation',
+        `Results from ${toolRequest.name}: ${JSON.stringify(result, null, 2)}`,
+        undefined
+      );
+      
+      // Evaluate how useful the results were
+      const score = await this.evaluateResults(result, selectedPath);
+      observation.confidence = score;
+      
+      // Mark current reasoning path as explored
+      this.stateManager.markCurrentNodeExplored(score >= 0.5);
+      
+      // Step 6: Decide whether to continue, backtrack, or explore new paths
+      const nextAction = await this.decideNextAction(score);
+      
+      // Return the results and next action
+      return {
+        result,
+        score,
+        nextAction
+      };
+    } catch (error: unknown) {
+      console.error('Error in ReAct cycle:', error);
+      
+      // Add error observation to state
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.stateManager.addThought(
+        'observation',
+        `Error during reasoning cycle: ${errorMessage}`,
+        0.1
+      );
+      
+      // Return a low score result with error information
+      return {
+        result: { error: errorMessage },
+        score: 0.1,
+        nextAction: 'explore_new'
+      };
     }
-    
-    // Step 4: Acting - Execute the tool
-    this.stateManager.updateStatus('acting', 'Tool Execution', `Using ${toolRequest.name}`);
-    
-    // Find the selected tool
-    const selectedTool = this.tools.find(tool => tool.name === toolRequest.name);
-    if (!selectedTool) {
-      throw new Error(`Tool not found: ${toolRequest.name}`);
-    }
-    
-    // Execute the tool
-    const result = await selectedTool.handle(toolRequest.input);
-    
-    // Step 5: Observation - Evaluate results
-    this.stateManager.updateStatus('observing', 'Result Evaluation', `Evaluating results from ${toolRequest.name}`);
-    
-    const observation = this.stateManager.addThought(
-      'observation',
-      `Results from ${toolRequest.name}: ${JSON.stringify(result, null, 2)}`,
-      undefined
-    );
-    
-    // Evaluate how useful the results were
-    const score = await this.evaluateResults(result, selectedPath);
-    observation.confidence = score;
-    
-    // Mark current reasoning path as explored
-    this.stateManager.markCurrentNodeExplored(score >= 0.5);
-    
-    // Step 6: Decide whether to continue, backtrack, or explore new paths
-    const nextAction = await this.decideNextAction(score);
-    
-    // Return the results and next action
-    return {
-      result,
-      score,
-      nextAction
-    };
   }
 
   /**
