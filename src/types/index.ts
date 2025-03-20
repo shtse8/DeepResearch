@@ -1,4 +1,4 @@
-// Type definitions for DeepSearch
+// Type definitions for DeepResearch
 
 // Research state types
 export type ResearchStatus = 'idle' | 'thinking' | 'acting' | 'observing' | 'reporting';

@@ -1,6 +1,6 @@
-# Contributing to DeepSearch
+# Contributing to DeepResearch
 
-Thank you for considering contributing to DeepSearch! This document provides guidelines and instructions for contributing to this project.
+Thank you for considering contributing to DeepResearch! This document provides guidelines and instructions for contributing to this project.
 
 ## Code of Conduct
 
@@ -9,8 +9,8 @@ Please be respectful and considerate of others when contributing to this project
 ## Getting Started
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/your-username/DeepSearch.git`
-3. Add the upstream repository: `git remote add upstream https://github.com/original-owner/DeepSearch.git`
+2. Clone your fork: `git clone https://github.com/your-username/DeepResearch.git`
+3. Add the upstream repository: `git remote add upstream https://github.com/original-owner/DeepResearch.git`
 4. Create a branch for your work: `git checkout -b feature/your-feature-name`
 
 ## Development Setup

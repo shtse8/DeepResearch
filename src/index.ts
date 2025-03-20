@@ -1,4 +1,4 @@
-import { DeepSearch } from './DeepSearch';
+import { DeepResearch } from './DeepResearch';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
@@ -51,10 +51,10 @@ function saveReport(topic: string, report: string): string {
   return filepath;
 }
 
-// Run DeepSearch with command line arguments
+// Run DeepResearch with command line arguments
 async function runResearch() {
   try {
-    console.log('\n🧠 DeepSearch - AI-Powered Research with Advanced Reasoning');
+    console.log('\n🧠 DeepResearch - AI-Powered Research with Advanced Reasoning');
     console.log('=============================================================');
     
     // Check environment variables first
@@ -83,13 +83,13 @@ async function runResearch() {
     // Track start time
     const startTime = Date.now();
     
-    // Initialize DeepSearch
-    const deepSearch = new DeepSearch();
+    // Initialize DeepResearch
+    const deepResearch = new DeepResearch();
     
     // Display progress bar and state information
     let lastStatusUpdate = '';
     const statusInterval = setInterval(() => {
-      const state = deepSearch.getState();
+      const state = deepResearch.getState();
       const elapsedMinutes = ((Date.now() - startTime) / 60000).toFixed(1);
       
       // Only log if status has changed to reduce console clutter
@@ -102,7 +102,7 @@ async function runResearch() {
     }, 10000); // Log every 10 seconds if status changes
     
     // Run the research
-    const reportText = await deepSearch.research(researchTopic);
+    const reportText = await deepResearch.research(researchTopic);
     
     // Clear the interval timer
     clearInterval(statusInterval);

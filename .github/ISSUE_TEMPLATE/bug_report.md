@@ -27,7 +27,7 @@ If applicable, add screenshots to help explain your problem.
 - OS: [e.g. Windows 10, macOS, Ubuntu 22.04]
 - Node.js version:
 - Bun version:
-- DeepSearch version/commit:
+- DeepResearch version/commit:
 
 ## Additional Context
 Add any other context about the problem here. 

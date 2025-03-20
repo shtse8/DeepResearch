@@ -1,7 +1,7 @@
-# DeepSearch 🧠
+# DeepResearch 🧠
 
 <p align="center">
-  <img src="assets/logo.png" alt="DeepSearch Logo" width="200" height="200">
+  <img src="assets/logo.png" alt="DeepResearch Logo" width="200" height="200">
   <br>
   <em>Advanced AI-Powered Research with Tree of Thoughts Reasoning</em>
 </p>
@@ -17,7 +17,7 @@
   <a href="#license">License</a>
 </p>
 
-DeepSearch is a powerful TypeScript-based research tool that leverages advanced AI reasoning techniques to conduct comprehensive research on any topic. By implementing ReAct (Reasoning + Acting) and Tree of Thoughts methodologies, DeepSearch can explore complex subjects with human-like thought processes and generate detailed, insightful reports.
+DeepResearch is a powerful TypeScript-based research tool that leverages advanced AI reasoning techniques to conduct comprehensive research on any topic. By implementing ReAct (Reasoning + Acting) and Tree of Thoughts methodologies, DeepResearch can explore complex subjects with human-like thought processes and generate detailed, insightful reports.
 
 ## Features
 
@@ -57,7 +57,7 @@ DeepSearch is a powerful TypeScript-based research tool that leverages advanced 
 
 ## Usage
 
-Run DeepSearch by specifying a research topic:
+Run DeepResearch by specifying a research topic:
 
 ```bash
 bun run start "bitcoin price trend in this year"
@@ -72,7 +72,7 @@ The tool will:
 
 ## Examples
 
-Here are some example research topics you can explore with DeepSearch:
+Here are some example research topics you can explore with DeepResearch:
 
 - `"Impact of artificial intelligence on job market"`
 - `"Climate change mitigation strategies"`
@@ -82,11 +82,11 @@ Here are some example research topics you can explore with DeepSearch:
 
 ## How It Works
 
-DeepSearch leverages several advanced techniques to produce human-like research capabilities:
+DeepResearch leverages several advanced techniques to produce human-like research capabilities:
 
 ### Natural Thinking Process
 
-DeepSearch implements a fluid thinking process that mimics how humans approach research problems:
+DeepResearch implements a fluid thinking process that mimics how humans approach research problems:
 
 ```typescript
 // Example of natural thinking prompt implementation
@@ -120,7 +120,7 @@ facets and gather diverse types of information to get a comprehensive understand
 
 ### Tree of Thoughts Reasoning
 
-Unlike traditional AI, DeepSearch explores multiple reasoning paths and backtracks when a path isn't fruitful:
+Unlike traditional AI, DeepResearch explores multiple reasoning paths and backtracks when a path isn't fruitful:
 
 ```typescript
 // Dynamic path selection
@@ -156,7 +156,7 @@ try {
 
 ### Information Synthesis
 
-DeepSearch doesn't just collect information - it synthesizes findings into coherent insights:
+DeepResearch doesn't just collect information - it synthesizes findings into coherent insights:
 
 ```typescript
 // Information analysis and synthesis 
@@ -191,7 +191,7 @@ The search results for "Bitcoin price trend in this year" reveal several key ins
 
 ## Architecture
 
-DeepSearch consists of several core components:
+DeepResearch consists of several core components:
 
 - **ReasoningEngine**: Implements the cognitive reasoning process using advanced AI techniques
 - **BrowserManager**: Handles web browsing and content extraction

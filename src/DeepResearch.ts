@@ -12,10 +12,10 @@ import { ReportGenerator } from './reporting/ReportGenerator';
 dotenv.config();
 
 /**
- * DeepSearch - A TypeScript class for deep research using advanced reasoning.
+ * DeepResearch - A TypeScript class for deep research using advanced reasoning.
  * Implements ReAct (Reasoning + Acting) and Tree of Thoughts for more effective reasoning.
  */
-export class DeepSearch {
+export class DeepResearch {
   private ai;
   private stateManager!: ResearchStateManager; // Using definite assignment assertion
   private browserManager: BrowserManager;
