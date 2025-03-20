@@ -71,20 +71,43 @@ export class ToolRegistry {
       description: 'Search the web for information about a topic. Use this tool for initial research and to find relevant information.',
       inputSchema: z.object({
         query: z.string().describe('The search query'),
-        numResults: z.number().optional().describe('Number of results to return')
+        numResults: z.number().optional().describe('Number of results to return'),
+        page: z.number().optional().describe('Page number for pagination')
       }),
       outputSchema: z.array(z.any()),
       handle: async (input) => {
         console.log('Searching web for:', input.query);
         try {
+          // Before making the API call, log that we're searching
+          console.log(`🔍 Search query: "${input.query}"`);
+          
           const response = await getJson({
             api_key: this.serpApiKey,
             engine: 'google',
             device: 'mobile',
             q: input.query,
             num: input.numResults || 10,
+            start: ((input.page || 1) - 1) * 10
           });
-          return response.organic_results || [];
+          
+          // Format results to include more metadata
+          const formattedResults = (response.organic_results || []).map((result: any) => {
+            return {
+              title: result.title || 'Untitled',
+              url: result.link || '',
+              displayUrl: result.displayed_link || '',
+              snippet: result.snippet || '',
+              date: result.date || '',
+              position: result.position || 0,
+              source: result.link ? this.extractDomain(result.link) : ''
+            };
+          });
+          
+          if (formattedResults.length === 0) {
+            console.log('🔍 No relevant results found');
+          }
+          
+          return formattedResults;
         } catch (error) {
           console.error('Search error:', error);
           return [];
@@ -94,7 +117,7 @@ export class ToolRegistry {
   }
 
   /**
-   * Create extract web content tool
+   * Create extract web content tool with enhanced browsing capabilities
    */
   private createExtractWebContentTool(): ResearchTool<any, any> {
     return {
@@ -103,12 +126,74 @@ export class ToolRegistry {
       inputSchema: z.object({
         url: z.string().url().describe('The URL to extract content from')
       }),
-      outputSchema: z.string(),
+      outputSchema: z.object({
+        title: z.string(),
+        content: z.string(),
+        metadata: z.record(z.any())
+      }),
       handle: async (input) => {
-        console.log('Extracting content from:', input.url);
-        return await this.browserManager.extractWebContent(input.url);
+        console.log(`🌐 Browsing webpage: ${input.url}`);
+        
+        try {
+          const content = await this.browserManager.extractWebContent(input.url);
+          
+          // Extract page title using a simple regex
+          const titleMatch = content.match(/<title>(.*?)<\/title>/i);
+          const title = titleMatch ? titleMatch[1] : 'Unknown Title';
+          
+          // Extract metadata where possible
+          const metadataMatches = content.match(/<meta[^>]+>/g) || [];
+          const metadata: Record<string, string> = {};
+          
+          metadataMatches.forEach(meta => {
+            const nameMatch = meta.match(/name=["']([^"']*)["']/i);
+            const contentMatch = meta.match(/content=["']([^"']*)["']/i);
+            
+            if (nameMatch && nameMatch[1] && contentMatch && contentMatch[1]) {
+              metadata[nameMatch[1]] = contentMatch[1];
+            }
+          });
+          
+          // Generate a summary of the content
+          const summaryPrompt = `
+            Summarize the key information from this webpage content:
+            ${content.substring(0, 3000)}
+            
+            Provide a concise 2-3 paragraph summary of the main points.
+          `;
+          
+          const { text: summary } = await this.ai.generate(summaryPrompt);
+          console.log(`📄 Page summary:\n${summary}\n`);
+          
+          return {
+            title,
+            content: content,
+            summary,
+            metadata
+          };
+        } catch (error) {
+          console.error('Error extracting web content:', error);
+          return {
+            title: 'Error',
+            content: 'Failed to extract content from the webpage',
+            metadata: {}
+          };
+        }
       }
     };
+  }
+
+  /**
+   * Extract domain name from URL
+   */
+  private extractDomain(url: string): string {
+    try {
+      if (!url) return '';
+      const urlObj = new URL(url);
+      return urlObj.hostname;
+    } catch (e) {
+      return url || '';
+    }
   }
 
   /**

@@ -39,7 +39,7 @@ export class DeepSearch {
     // Initialize GenKit with OpenAI plugin
     this.ai = genkit({
       plugins: [openAI({ apiKey: process.env.OPENAI_API_KEY })],
-      model: gpt4o,
+      model: gpt4oMini,
     });
     
     // Initialize managers and components

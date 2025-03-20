@@ -64,10 +64,21 @@ export interface ResearchReport {
     exploredPaths: Thought[];
     discardedPaths?: Thought[];
     confidenceScores?: Record<string, number>;
+    reasoningAnalysis?: string;
   };
   toolsUsed?: Array<{
     name: string;
     purpose: string;
     timesUsed: number;
   }>;
+  insights?: {
+    keyInsights: string;
+    visualizationSuggestions: string;
+  };
+  metadata?: {
+    generatedAt: string;
+    researchDuration: string;
+    sourcesExamined: number;
+    confidenceScore: number;
+  };
 } 

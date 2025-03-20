@@ -54,8 +54,8 @@ function saveReport(topic: string, report: string): string {
 // Run DeepSearch with command line arguments
 async function runResearch() {
   try {
-    console.log('\n🔍 DeepSearch - AI-Powered Research with Advanced Reasoning');
-    console.log('=========================================================');
+    console.log('\n🧠 DeepSearch - AI-Powered Research with Advanced Reasoning');
+    console.log('=============================================================');
     
     // Check environment variables first
     if (!checkEnvironment()) {
@@ -64,17 +64,21 @@ async function runResearch() {
     
     // Get research topic from command line args or use default
     const researchTopic = process.argv[2] || 'Impact of artificial intelligence on job market';
-    console.log(`\n📋 Researching topic: "${researchTopic}"\n`);
+    
+    // Display research banner
+    console.log(`\n📋 Research Topic: "${researchTopic}"`);
+    console.log('=============================================================');
     
     // Display diagnostics information
-    console.log('System info:');
-    console.log('- Platform:', process.platform);
-    console.log('- Node version:', process.version);
-    console.log('- Memory usage:', `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`);
-    console.log('');
+    console.log('\n🖥️  System Information:');
+    console.log(`• Platform: ${process.platform}`);
+    console.log(`• Node version: ${process.version}`);
+    console.log(`• Memory usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`);
     
-    // Start the research process
-    console.log('⏳ Beginning research process. This may take several minutes...\n');
+    // Start the research process with a clear visual separator
+    console.log('\n=============================================================');
+    console.log('🔍 Starting Deep Research Process');
+    console.log('=============================================================\n');
     
     // Track start time
     const startTime = Date.now();
@@ -82,30 +86,46 @@ async function runResearch() {
     // Initialize DeepSearch
     const deepSearch = new DeepSearch();
     
-    // Periodically log state to show progress
-    const interval = setInterval(() => {
+    // Display progress bar and state information
+    let lastStatusUpdate = '';
+    const statusInterval = setInterval(() => {
       const state = deepSearch.getState();
       const elapsedMinutes = ((Date.now() - startTime) / 60000).toFixed(1);
-      console.log(`[${elapsedMinutes} min] Current status: ${state.status.toUpperCase()} - ${state.currentStep}`);
-      console.log(`Memory usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`);
-    }, 30000); // Log every 30 seconds
+      
+      // Only log if status has changed to reduce console clutter
+      const currentStatus = `${state.status} - ${state.currentStep}`;
+      if (currentStatus !== lastStatusUpdate) {
+        console.log(`\n⏱️  [${elapsedMinutes} min] Current status: ${state.status.toUpperCase()} - ${state.currentStep}`);
+        console.log(`💾 Memory usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`);
+        lastStatusUpdate = currentStatus;
+      }
+    }, 10000); // Log every 10 seconds if status changes
     
     // Run the research
     const reportText = await deepSearch.research(researchTopic);
     
     // Clear the interval timer
-    clearInterval(interval);
+    clearInterval(statusInterval);
     
     // Calculate total time
     const totalMinutes = ((Date.now() - startTime) / 60000).toFixed(1);
-    console.log(`\n✅ Research completed in ${totalMinutes} minutes.\n`);
     
-    // Display report preview
-    console.log('\n===== RESEARCH REPORT PREVIEW =====\n');
-    console.log(reportText.substring(0, 500) + '...');
-    console.log('\n===== END OF PREVIEW =====\n');
+    // Display completion message with visual separator
+    console.log('\n=============================================================');
+    console.log(`✅ Research completed in ${totalMinutes} minutes`);
+    console.log('=============================================================\n');
     
-    console.log('Full report is saved in the reports directory.');
+    // Display report preview with better formatting
+    console.log('📊 RESEARCH REPORT PREVIEW');
+    console.log('=============================================================\n');
+    
+    // Get the first 3 paragraphs of the report for the preview
+    const previewParagraphs = reportText.split('\n\n').slice(0, 3).join('\n\n');
+    console.log(previewParagraphs + '...\n');
+    
+    console.log('=============================================================');
+    console.log('📝 Full report is saved in the reports directory');
+    console.log('=============================================================\n');
     
   } catch (error) {
     console.error('\n❌ Error running research:', (error as Error).message);
