@@ -51,21 +51,18 @@ function saveReport(topic: string, report: string): string {
   return filepath;
 }
 
-// Usage example
-async function runExample() {
+// Run DeepSearch with command line arguments
+async function runResearch() {
   try {
-    console.log('\n🔍 DeepSearch - AI-Powered Research (改進版)');
-    console.log('=======================================');
+    console.log('\n🔍 DeepSearch - AI-Powered Research with Advanced Reasoning');
+    console.log('=========================================================');
     
     // Check environment variables first
     if (!checkEnvironment()) {
       process.exit(1);
     }
     
-    // Initialize DeepSearch (API keys loaded from .env file)
-    const deepSearch = new DeepSearch();
-    
-    // Define research topic
+    // Get research topic from command line args or use default
     const researchTopic = process.argv[2] || 'Impact of artificial intelligence on job market';
     console.log(`\n📋 Researching topic: "${researchTopic}"\n`);
     
@@ -73,7 +70,6 @@ async function runExample() {
     console.log('System info:');
     console.log('- Platform:', process.platform);
     console.log('- Node version:', process.version);
-    console.log('- Bun version:', process.versions.bun || 'unknown');
     console.log('- Memory usage:', `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`);
     console.log('');
     
@@ -82,6 +78,9 @@ async function runExample() {
     
     // Track start time
     const startTime = Date.now();
+    
+    // Initialize DeepSearch
+    const deepSearch = new DeepSearch();
     
     // Periodically log state to show progress
     const interval = setInterval(() => {
@@ -92,7 +91,7 @@ async function runExample() {
     }, 30000); // Log every 30 seconds
     
     // Run the research
-    const report = await deepSearch.research(researchTopic);
+    const reportText = await deepSearch.research(researchTopic);
     
     // Clear the interval timer
     clearInterval(interval);
@@ -101,14 +100,12 @@ async function runExample() {
     const totalMinutes = ((Date.now() - startTime) / 60000).toFixed(1);
     console.log(`\n✅ Research completed in ${totalMinutes} minutes.\n`);
     
-    // Save report to file
-    const filepath = saveReport(researchTopic, report);
-    console.log(`📄 Report saved to: ${filepath}\n`);
+    // Display report preview
+    console.log('\n===== RESEARCH REPORT PREVIEW =====\n');
+    console.log(reportText.substring(0, 500) + '...');
+    console.log('\n===== END OF PREVIEW =====\n');
     
-    // Display report
-    console.log('\n===== RESEARCH REPORT =====\n');
-    console.log(report);
-    console.log('\n===== END OF REPORT =====\n');
+    console.log('Full report is saved in the reports directory.');
     
   } catch (error) {
     console.error('\n❌ Error running research:', (error as Error).message);
@@ -117,8 +114,8 @@ async function runExample() {
   }
 }
 
-// Run the example
-runExample().catch(err => {
+// Run the research process
+runResearch().catch(err => {
   console.error('Unhandled error:', err);
   process.exit(1);
 }); 

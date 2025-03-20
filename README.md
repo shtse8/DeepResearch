@@ -1,99 +1,88 @@
-# DeepSearch
+# DeepResearch
 
-A TypeScript class for deep research using GenKit, Playwright, and SerpAPI. Similar to Grok3 and Gemini 2.0's deep research capabilities.
+DeepResearch is an advanced research tool that uses Tree of Thoughts reasoning and ReAct (Reasoning + Acting) for deep, multi-step reasoning during research tasks.
 
 ## Features
 
-- **Web Search**: Uses SerpAPI to search Google for information
-- **Web Content Extraction**: Uses Playwright to extract content from websites
-- **Critical Thinking**: Uses GenKit with OpenAI's GPT-4o to analyze findings
-- **Status Tracking**: Provides detailed information about the research process
-- **Comprehensive Reporting**: Generates professional research reports
+- **Advanced Reasoning**: Implements Tree of Thoughts architecture for exploring multiple reasoning pathways
+- **Self-evaluation**: Evaluates the quality of research outcomes and adjusts reasoning paths accordingly
+- **Strategic Tool Selection**: Intelligently selects the most appropriate tool for each research step
+- **Comprehensive Reports**: Generates detailed research reports with structured sections and insights
+- **Web Research**: Automatically searches and extracts information from web sources
+- **Multi-hop Reasoning**: Supports complex, multi-step reasoning processes
+- **Backtracking**: Can backtrack from unproductive paths to explore alternatives
 
-## Requirements
+## Architecture
 
-- Node.js 20.x or higher (recommended)
-- Bun 1.x
-- SerpAPI API key
-- OpenAI API key
+DeepResearch uses a modular architecture:
+
+- `src/DeepSearch.ts` - Main entry point and controller
+- `src/state/` - Research state management
+- `src/reasoning/` - Reasoning engine with ReAct and Tree of Thoughts
+- `src/tools/` - Research tool definitions and implementations
+- `src/browser/` - Browser management for web interactions
+- `src/reporting/` - Report generation and formatting
+- `src/types/` - Shared type definitions
 
 ## Installation
 
-1. Clone this repository
-2. Install dependencies:
 ```bash
-bun install
+# Clone the repository
+git clone https://github.com/yourusername/deepresearch.git
+cd deepresearch
+
+# Install dependencies
+npm install
+
+# Create .env file with your API keys
+cp .env.example .env
+# Then edit .env with your API keys
 ```
 
 ## Configuration
 
-1. Create a `.env` file in the root directory (copy from `.env.example` if available)
-2. Add your API keys to the `.env` file:
+Create a `.env` file in the root directory with:
+
 ```
-SERPAPI_KEY=your_serpapi_key_here
-OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_API_KEY=your_openai_api_key
+SERPAPI_KEY=your_serpapi_key
 ```
 
 ## Usage
 
-Run the example:
-
-```bash
-bun start
-```
-
-Run in development mode with hot-reloading:
-
-```bash
-bun dev
-```
-
-Build for production:
-
-```bash
-bun build
-```
-
-## Code Example
-
 ```typescript
-import { DeepSearch } from './DeepSearch';
-import dotenv from 'dotenv';
+import { DeepSearch } from './src/DeepSearch';
 
-// Load environment variables
-dotenv.config();
-
-// Initialize DeepSearch (API keys loaded from .env file)
+// Initialize DeepSearch
 const deepSearch = new DeepSearch();
 
-// Start the research process
-const report = await deepSearch.research('Your research topic here');
-
-// Get the current state of the research
-const state = deepSearch.getState();
+// Conduct research on a topic
+const report = await deepSearch.research('Impact of artificial intelligence on job market');
+console.log(report);
 ```
 
-## Research Process
+Or use the built-in command line tool:
 
-DeepSearch follows this process:
+```bash
+# Run research with default topic
+npm start
 
-1. **Initial Search**: Performs web searches using SerpAPI
-2. **Content Extraction**: Extracts relevant content from web pages using Playwright
-3. **Critical Analysis**: Analyzes initial findings using AI
-4. **Follow-up Research**: Identifies and researches gaps in information
-5. **Deep Analysis**: Synthesizes all findings
-6. **Report Generation**: Creates a comprehensive research report
+# Run research with custom topic
+npm start "Quantum computing applications in healthcare"
+```
 
-## Output
+## Report Output
 
-The research report includes:
+Research reports are saved in the `reports/` directory as Markdown files. Each report includes:
 
-1. Executive Summary
-2. Key Findings
-3. Detailed Analysis
-4. Supporting Evidence
-5. Conclusions and Recommendations
+- Executive Summary
+- Key Findings/Statistics
+- Analysis
+- Implications
+- Recommendations
+- Sources
+- Research Methodology (including reasoning paths explored)
 
-## License
+## Contributing
 
-MIT
+Contributions are welcome! Please feel free to submit a Pull Request.
