@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/node": "^22.13.10",
+    "@types/node": "^26.0.0",
     "@types/uuid": "^10.0.0"
   },
   "peerDependencies": {
