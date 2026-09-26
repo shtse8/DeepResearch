@@ -1,7 +1,7 @@
 # DeepResearch 🧠
 
 <p align="center">
-  <img src="https://mark.sylphx.com/api/v1/mark/hero?type=void&theme=tokyonight&text=DeepResearch&desc=Advanced+AI-powered+research+tool+with+human-like+reasoning+capabilities.&height=200&animation=rise" alt="DeepResearch — Sylphx Mark banner" width="100%" />
+  <img src="https://mark.sylphx.com/api/v1/mark/hero.svg?type=waving&theme=dark&text=DeepResearch&desc=Multi-step%20AI%20web%20research" alt="DeepResearch" width="100%" />
 </p>
 
 <p align="center">
